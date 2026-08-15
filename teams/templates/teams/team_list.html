@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>팀 관리 | AX 평가 시스템</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, "Noto Sans KR", sans-serif;
+            background: #f6f8fc;
+            color: #1f2937;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 220px;
+            padding: 28px 16px;
+            background: white;
+            border-right: 1px solid #e5e7eb;
+        }
+
+        .logo {
+            margin: 0 0 36px;
+            color: #3156e8;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .logo span {
+            color: #1f2937;
+            font-size: 14px;
+        }
+
+        .menu {
+            display: grid;
+            gap: 8px;
+        }
+
+        .menu a {
+            padding: 12px;
+            border-radius: 8px;
+            color: #64748b;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .menu a.active {
+            background: #4263eb;
+            color: white;
+            font-weight: 700;
+        }
+
+        .content {
+            flex: 1;
+            padding: 38px;
+        }
+
+        .top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 26px;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 28px;
+        }
+
+        .description {
+            margin: 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .primary-button {
+            border: 0;
+            border-radius: 8px;
+            padding: 11px 16px;
+            background: #4263eb;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .summary-card {
+            padding: 20px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+        }
+
+        .summary-card p {
+            margin: 0 0 10px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .summary-card strong {
+            font-size: 25px;
+        }
+
+        .table-card {
+            overflow: hidden;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+        }
+
+        .table-title {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eef2f7;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 999px;
+            background: #dcfce7;
+            color: #15803d;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status.pending {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .detail-button {
+            padding: 7px 10px;
+            border: 1px solid #c7d2fe;
+            border-radius: 6px;
+            background: white;
+            color: #4263eb;
+            cursor: pointer;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .content { padding: 20px; }
+            .summary-grid { grid-template-columns: repeat(2, 1fr); }
+            .table-card { overflow-x: auto; }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <h2 class="logo">AX <span>평가 시스템</span></h2>
+
+            <nav class="menu">
+                <a href="#">관리자 홈</a>
+                <a href="#">수강생 관리</a>
+                <a href="#">평가 회차 관리</a>
+                <a href="#">과제 관리</a>
+                <a class="active" href="{% url 'teams:team_list' %}">팀 관리</a>
+                <a href="#">평가 템플릿</a>
+                <a href="#">결과 관리</a>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <div class="top">
+                <div>
+                    <h1>팀 관리</h1>
+                    <p class="description">평가 회차별 팀을 편성하고 관리하세요.</p>
+                </div>
+                <button class="primary-button" type="button">+ 팀 생성</button>
+            </div>
+
+            <section class="summary-grid">
+                <article class="summary-card">
+                    <p>전체 팀 수</p>
+                    <strong>{{ total_teams }}팀</strong>
+                </article>
+                <article class="summary-card">
+                    <p>전체 수강생 수</p>
+                    <strong>{{ total_students }}명</strong>
+                </article>
+                <article class="summary-card">
+                    <p>평균 팀 인원</p>
+                    <strong>{{ average_members }}명</strong>
+                </article>
+                <article class="summary-card">
+                    <p>미배정 학생</p>
+                    <strong>{{ unassigned_students }}명</strong>
+                </article>
+            </section>
+
+            <section class="table-card">
+                <div class="table-title">팀 목록</div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>팀명</th>
+                            <th>팀 인원</th>
+                            <th>팀원</th>
+                            <th>상태</th>
+                            <th>생성일</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for team in teams %}
+                        <tr>
+                            <td>{{ team.name }}</td>
+                            <td>{{ team.member_count }}명</td>
+                            <td>{{ team.members }}</td>
+                            <td>
+                                <span class="status {% if team.status == '편성 중' %}pending{% endif %}">
+                                    {{ team.status }}
+                                </span>
+                            </td>
+                            <td>{{ team.created_at }}</td>
+                            <td><button class="detail-button" type="button">상세 보기</button></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
