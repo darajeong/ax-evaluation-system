@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 성공</title>
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f5f6fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .card {
+            background: white;
+            width: 400px;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #555;
+            font-size: 16px;
+        }
+
+        .logout {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 30px;
+            background: #222;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+        }
+
+        .logout:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h1>🎉 로그인 성공!</h1>
+
+    <p>
+        안녕하세요,<br>
+        <strong>{{ user.first_name }} {{ user.last_name }}</strong>님 👋
+    </p>
+
+    <p>
+        아이디<br>
+        {{ user.username }}
+    </p>
+
+    <p>
+        이메일<br>
+        {{ user.email }}
+    </p>
+
+    <a class="logout" href="{% url 'logout' %}">
+        로그아웃
+    </a>
+
+</div>
+
+</body>
+</html>
